@@ -14,7 +14,7 @@ type Db struct {
 	Pool *pgxpool.Pool
 }
 
-func InitDatabase(cfg *config.DBConfig) (*Db, error) {
+func InitDatabase(cfg config.DBConfig) (*Db, error) {
 
 	connString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Name, cfg.SslMode)
 

@@ -2,50 +2,61 @@ package config
 
 import (
 	"fmt"
-	"os"
 	"time"
 
+	"github.com/caarlos0/env/v10"
 	"github.com/goNiki/ReviewService/models/errorapp"
-	"gopkg.in/yaml.v2"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	ServerConfig *ServerConfig `yaml:"server"`
-	DBConfig     *DBConfig     `yaml:"database"`
+	ServerConfig ServerConfig
+	DBConfig     DBConfig
 }
 
 type ServerConfig struct {
-	Env         string        `yaml:"env"`
-	Host        string        `yaml:"host"`
-	Port        string        `yaml:"port"`
-	Timeout     time.Duration `yaml:"timeout"`
-	IdleTimeout time.Duration `yaml:"idle_timeout"`
+	Env         string        `env:"SERVER_ENV" envDefault:"local"`
+	Host        string        `env:"SERVER_HOST" envDefault:"localhost"`
+	Port        string        `env:"SERVER_PORT" envDefault:"8080"`
+	Timeout     time.Duration `env:"SERVER_TIMEOUT" envDefault:"4s"`
+	IdleTimeout time.Duration `env:"SERVER_IDLE_TIMEOUT" envDefault:"60s"`
 }
 
 type DBConfig struct {
-	Host              string        `yaml:"host"`
-	Port              string        `yaml:"port"`
-	User              string        `yaml:"user"`
-	Password          string        `yaml:"password"`
-	Name              string        `yaml:"name"`
-	SslMode           string        `yaml:"sslmode"`
-	MaxConns          int32         `yaml:"maxconns"`
-	MinConns          int32         `yaml:"minconns"`
-	MaxConnLifeTime   time.Duration `yaml:"maxconnlifetime"`
-	MaxConnIdleTime   time.Duration `yaml:"maxconnidletime"`
-	HealthCheckPeriod time.Duration `yaml:"healthcheckperiod"`
+	Host              string        `env:"DB_HOST" envDefault:"localhost"`
+	Port              string        `env:"DB_PORT" envDefault:"5432"`
+	User              string        `env:"DB_USER" envDefault:"postgres"`
+	Password          string        `env:"DB_PASSWORD" envDefault:"postgres"`
+	Name              string        `env:"DB_NAME" envDefault:"postgres"`
+	SslMode           string        `env:"DB_SSLMODE" envDefault:"disable"`
+	MaxConns          int32         `env:"DB_MAXCONNS" envDefault:"20"`
+	MinConns          int32         `env:"DB_MINCONNS" envDefault:"5"`
+	MaxConnLifeTime   time.Duration `env:"DB_MAXCONNLIFETIME" envDefault:"30m"`
+	MaxConnIdleTime   time.Duration `env:"DB_MAXCONNIDLETIME" envDefault:"5m"`
+	HealthCheckPeriod time.Duration `env:"Db_HEALTHCHECKPERIOD" envDefault:"1m"`
 }
 
 func InitConfig(configPath string) (*Config, error) {
 
-	date, err := os.ReadFile(configPath)
+	err := godotenv.Load(configPath)
 	if err != nil {
 		return &Config{}, fmt.Errorf("%w: %v", errorapp.ErrInitConfig, err)
 	}
-	var cfg Config
-	if err := yaml.Unmarshal(date, &cfg); err != nil {
+
+	var server ServerConfig
+
+	if err := env.Parse(&server); err != nil {
 		return &Config{}, fmt.Errorf("%w: %v", errorapp.ErrInitConfig, err)
 	}
 
-	return &cfg, nil
+	var db DBConfig
+
+	if err := env.Parse(&db); err != nil {
+		return &Config{}, fmt.Errorf("%w: %v", errorapp.ErrInitConfig, err)
+	}
+
+	return &Config{
+		ServerConfig: server,
+		DBConfig:     db,
+	}, nil
 }

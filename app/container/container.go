@@ -20,7 +20,7 @@ type Container struct {
 	Server    *http.Server
 }
 
-var configPath = "./configs/configs.yaml"
+var configPath = "./configs/.env"
 
 func NewContainer() (*Container, error) {
 
