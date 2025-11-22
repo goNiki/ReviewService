@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	_ "embed"
 	"fmt"
 	"log"
 	"os"
@@ -11,7 +12,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/goNiki/ReviewService/app/container"
+	"github.com/goNiki/ReviewService/internal/infrastructure/swagger"
 )
+
+//go:embed openapi.yaml
+var swaggerDoc []byte
 
 func main() {
 
@@ -21,6 +26,8 @@ func main() {
 	}
 
 	r := chi.NewRouter()
+
+	swagger.RegisterRoutes(r, swaggerDoc)
 
 	r.Mount("/", c.ApiServer)
 
