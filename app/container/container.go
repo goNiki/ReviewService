@@ -8,6 +8,7 @@ import (
 	"github.com/goNiki/ReviewService/internal/infrastructure/config"
 	"github.com/goNiki/ReviewService/internal/infrastructure/database"
 	"github.com/goNiki/ReviewService/internal/infrastructure/logger"
+	"github.com/goNiki/ReviewService/internal/infrastructure/migrator"
 	"github.com/goNiki/ReviewService/models/errorapp"
 	"github.com/goNiki/ReviewService/shared/pkg/openapi/reviewerservice/v1"
 )
@@ -16,11 +17,15 @@ type Container struct {
 	Config    *config.Config
 	Log       *logger.Log
 	Db        *database.Db
+	Migration *migrator.Migrator
 	ApiServer *reviewerservice.Server
 	Server    *http.Server
 }
 
-var configPath = "./configs/.env"
+var (
+	migrationPath = "./migrations"
+	configPath    = "./configs/.env"
+)
 
 func NewContainer() (*Container, error) {
 
@@ -38,6 +43,10 @@ func NewContainer() (*Container, error) {
 	if err != nil {
 		return &Container{}, err
 	}
+
+	c.Migration = migrator.NewMigrator(c.Db.Pool, migrationPath)
+
+	c.Migration.Up()
 
 	c.ApiServer, err = reviewerservice.NewServer(reviewerservice.UnimplementedHandler{})
 	if err != nil {
