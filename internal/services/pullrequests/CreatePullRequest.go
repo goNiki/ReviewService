@@ -73,12 +73,12 @@ func (s *Service) CreatePullRequest(ctx context.Context, prID, prName, authorID 
 
 }
 
-func selectRandomReviewers(candidates []*domain.User, max int64) []string {
+func selectRandomReviewers(candidates []*domain.User, max int) []string {
 	if len(candidates) == 0 {
 		return []string{}
 	}
 
-	if len(candidates) <= int(max) {
+	if len(candidates) <= max {
 		result := make([]string, 0, len(candidates))
 		for _, u := range candidates {
 			result = append(result, u.UserId)
@@ -94,7 +94,7 @@ func selectRandomReviewers(candidates []*domain.User, max int64) []string {
 	result := make([]string, 0, max)
 	usedKeys := make(map[int]bool)
 
-	for len(result) < int(max) {
+	for len(result) < max {
 		randomKey := rand.Intn(len(candidates))
 
 		if !usedKeys[randomKey] {
