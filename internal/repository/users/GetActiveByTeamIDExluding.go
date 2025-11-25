@@ -34,7 +34,7 @@ func (r *Repository) GetActiveByTeamIDExluding(ctx context.Context, tx database.
 
 	defer rows.Close()
 
-	users := make([]repomodels.User, 5)
+	users := make([]repomodels.User, 0, 5)
 	for rows.Next() {
 		var user repomodels.User
 		if err := rows.Scan(&user.UserID, &user.UserName, &user.TeamID, &user.IsActive, &user.CreatedAt, &user.UpdatedAt); err != nil {

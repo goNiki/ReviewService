@@ -13,7 +13,7 @@ func (r *Repository) UpdateUser(ctx context.Context, tx database.Tx, user *domai
 	const op = "repository.users.Updateuser"
 
 	query := `
-		UPDATE users SET
+		UPDATE users
 		SET username = $2, team_id = $3, is_active = $4, updated_at = $5
 		WHERE user_id = $1`
 

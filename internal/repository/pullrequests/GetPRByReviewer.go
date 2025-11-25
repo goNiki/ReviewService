@@ -14,10 +14,10 @@ func (r *Repository) GetPRsByReviewer(ctx context.Context, tx database.Tx, revie
 
 	query := `
 		SELECT pr.pr_id, pr.pr_name, pr.author_id, pr.team_id, pr.status, pr.created_at, pr.merged_at
-		FORM pull_requests pr
+		FROM pull_requests pr
 		JOIN pr_reviewers prr ON pr.pr_id = prr.pr_id 
 		WHERE prr.reviewer_id = $1
-		ORDER BY pr.created_at DESK
+		ORDER BY pr.created_at DESC
 	`
 
 	var rows pgx.Rows
@@ -35,7 +35,7 @@ func (r *Repository) GetPRsByReviewer(ctx context.Context, tx database.Tx, revie
 
 	defer rows.Close()
 
-	pullrequests := make([]*domain.PullRequest, 20)
+	pullrequests := make([]*domain.PullRequest, 0, 20)
 
 	for rows.Next() {
 		var pr domain.PullRequest

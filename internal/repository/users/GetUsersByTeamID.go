@@ -32,7 +32,7 @@ func (r *Repository) GetUsersByTeamID(ctx context.Context, tx database.Tx, teamI
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 	defer rows.Close()
-	users := make([]repomodels.User, 5)
+	users := make([]repomodels.User, 0, 5)
 
 	for rows.Next() {
 		var user repomodels.User

@@ -13,7 +13,7 @@ func (r *Repository) GetReviewers(ctx context.Context, tx database.Tx, prId stri
 
 	query := `
 		SELECT reviewer_id
-		FROM pr_reviwers
+		FROM pr_reviewers
 		WHERE pr_id = $1
 		ORDER BY assigned_at
 	`

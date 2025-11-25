@@ -17,3 +17,9 @@ type UserWithTeamName struct {
 	TeamName string
 	IsActive bool
 }
+
+type Team struct {
+	Id         int64
+	Name       string
+	Created_at time.Time
+}
