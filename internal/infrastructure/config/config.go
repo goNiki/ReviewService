@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/caarlos0/env/v10"
@@ -36,23 +37,33 @@ type DBConfig struct {
 	HealthCheckPeriod time.Duration `env:"Db_HEALTHCHECKPERIOD" envDefault:"1m"`
 }
 
-func InitConfig(configPath string) (*Config, error) {
+func InitConfig() (*Config, error) {
 
-	err := godotenv.Load(configPath)
-	if err != nil {
-		return &Config{}, fmt.Errorf("%w: %v", errorapp.ErrInitConfig, err)
+	configPath := os.Getenv("CONFIG_PATH")
+	if configPath == "" {
+		configPath = "./configs/.env"
+	}
+
+	if _, err := os.Stat(configPath); err == nil {
+		if err := godotenv.Load(configPath); err != nil {
+			return &Config{}, fmt.Errorf("%w: failed to load .env file from %s: %v", errorapp.ErrInitConfig, configPath, err)
+		}
+	} else {
+		if _, err := os.Stat("./.env"); err == nil {
+			_ = godotenv.Load("./.env")
+		}
 	}
 
 	var server ServerConfig
 
 	if err := env.Parse(&server); err != nil {
-		return &Config{}, fmt.Errorf("%w: %v", errorapp.ErrInitConfig, err)
+		return &Config{}, fmt.Errorf("%w: failed to parse server config: %v", errorapp.ErrInitConfig, err)
 	}
 
 	var db DBConfig
 
 	if err := env.Parse(&db); err != nil {
-		return &Config{}, fmt.Errorf("%w: %v", errorapp.ErrInitConfig, err)
+		return &Config{}, fmt.Errorf("%w: failed to parse db config: %v", errorapp.ErrInitConfig, err)
 	}
 
 	return &Config{

@@ -1,8 +1,12 @@
 package logger
 
 import (
+	"context"
 	"log/slog"
 	"os"
+
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/goNiki/ReviewService/internal/infrastructure/logger/sl"
 )
 
 type Log struct {
@@ -22,4 +26,11 @@ func InitLogger(env string) *Log {
 	return &Log{
 		Log: log,
 	}
+}
+
+func (l *Log) Error(ctx context.Context, operation string, err error) {
+	l.Log.Error("operation Error",
+		slog.String("operation", operation),
+		slog.String("request_id", middleware.GetReqID(ctx)),
+		sl.Error(err))
 }
