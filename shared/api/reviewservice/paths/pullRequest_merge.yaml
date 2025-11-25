@@ -1,0 +1,56 @@
+post:
+  tags: [PullRequests]
+  summary: Пометить PR как MERGED (идемпотентная операция)
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required: [pull_request_id]
+          properties:
+            pull_request_id:
+              type: string
+              minLength: 1
+              maxLength: 100
+              description: Уникальный ID PR
+        example:
+          pull_request_id: pr-1001
+  responses:
+    '200':
+      description: PR в состоянии MERGED
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              pr:
+                $ref: ../schemas/PullRequest.yaml
+          example:
+            pr:
+              pull_request_id: pr-1001
+              pull_request_name: Add search
+              author_id: u1
+              status: MERGED
+              assigned_reviewers: [u2, u3]
+              mergedAt: 2025-10-24T12:34:56Z
+    '404':
+      description: PR  не найден
+      content:
+        application/json:
+          schema:
+            $ref: ../errors/not_found_error.yaml
+          example:
+            error:
+              code: NOT_FOUND
+              message: pr not found
+    '500':
+      description: Ошибка в работе сервиса
+      content:
+        application/json:
+          schema:
+            $ref: ../errors/internal_server_error.yaml
+          example:
+            error:
+              code: INTERNAL_ERROR
+              message: internal service error

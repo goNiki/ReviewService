@@ -1,0 +1,21 @@
+type: object
+required: [ user_id, username, team_name, is_active ]
+properties:
+  user_id:
+    type: string
+    minLength: 1
+    maxLength: 50
+    description: Уникальный ID пользователя
+  username:
+    type: string
+    minLength: 1
+    maxLength: 100
+    description: Имя пользователя
+  team_name:
+    type: string
+    minLength: 1
+    maxLength: 100
+    description: Название команды пользователя
+  is_active:
+    type: boolean
+    description: Активен ли пользователь

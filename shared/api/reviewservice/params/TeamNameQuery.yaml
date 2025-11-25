@@ -1,0 +1,8 @@
+name: team_name
+in: query
+required: true
+schema:
+  type: string
+  minLength: 1
+  maxLength: 255
+description: Уникальное имя команды

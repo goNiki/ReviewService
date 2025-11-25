@@ -1,0 +1,25 @@
+type: object
+required: [ pull_request_id, pull_request_name, author_id, status, assigned_reviewers]
+properties:
+  pull_request_id:
+    type: string
+  pull_request_name:
+    type: string
+  author_id:
+    type: string
+  status:
+    type: string
+    enum: [OPEN, MERGED]
+  assigned_reviewers:
+    type: array
+    items:
+      type: string
+    description: user_id назначенных ревьюверов (0..2)
+  createdAt:
+    type: string
+    format: date-time
+    nullable: true
+  mergedAt:
+    type: string
+    format: date-time
+    nullable: true

@@ -1,0 +1,8 @@
+name: user_id
+in: query
+required: true
+schema:
+  type: string
+  minLength: 1
+  maxLength: 50
+description: Идентификатор пользователя

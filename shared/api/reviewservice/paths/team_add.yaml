@@ -1,0 +1,59 @@
+post:
+  tags: [Teams]
+  summary: Создать команду с участниками (создаёт/обновляет пользователей)
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../schemas/Team.yaml
+        example:
+          team_name: payments
+          members:
+            - user_id: u1
+              username: Alice
+              is_active: true
+            - user_id: u2
+              username: Bob
+              is_active: true
+  responses:
+    '201':
+      description: Команда создана
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              team:
+                $ref: ../schemas/Team.yaml
+          example:
+            team:
+              team_name: backend
+              members:
+                - user_id: u1
+                  username: Alice
+                  is_active: true
+                - user_id: u2
+                  username: Bob
+                  is_active: true
+    '400':
+      description: Команда уже существует
+      content:
+        application/json:
+          schema:
+            $ref: ../errors/bad_request_error.yaml
+          example:
+            error:
+              code: TEAM_EXISTS
+              message: team_name already exists
+    '500':
+      description: Ошибка в работе сервиса
+      content:
+        application/json:
+          schema:
+            $ref: ../errors/internal_server_error.yaml
+          example:
+            error:
+              code: INTERNAL_ERROR
+              message: internal service error
+        

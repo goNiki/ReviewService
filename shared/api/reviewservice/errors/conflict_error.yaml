@@ -1,0 +1,26 @@
+type: object
+required:
+  - error
+properties:
+  error:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: string
+        enum:
+          - PR_MERGED
+          - NOT_ASSIGNED
+          - NO_CANDIDATE
+          - PR_EXISTS
+        description: |
+          Внутренние коды ошибок:
+          - PR_MERGED: Нельзя менять после MERGED
+          - NOT_ASSIGNED: Пользователь не был назначен ревьювером
+          - NO_CANDIDATE: Нет доступных кандидатов
+          - PR_EXISTS: Пулреквест уже есть 
+      message:
+        type: string
+        description: Описание ошибки

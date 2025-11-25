@@ -1,0 +1,22 @@
+type: object
+required:
+  - error
+properties:
+  error:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: string
+        enum:
+          - TEAM_EXISTS
+          - PR_EXISTS
+        description: |
+          Внутренние коды ошибок:
+          - TEAM_EXISTS: команда сущесвует
+          - PR_EXISTS: Pull Request существует
+      message:
+        type: string
+        description: Описание ошибки

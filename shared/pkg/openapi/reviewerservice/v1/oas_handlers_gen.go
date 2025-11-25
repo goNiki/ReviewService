@@ -817,7 +817,7 @@ func (s *Server) handleUsersGetReviewGetRequest(args [0]string, argsEscaped bool
 
 	var rawBody []byte
 
-	var response *UsersGetReviewGetOK
+	var response UsersGetReviewGetRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
@@ -838,7 +838,7 @@ func (s *Server) handleUsersGetReviewGetRequest(args [0]string, argsEscaped bool
 		type (
 			Request  = struct{}
 			Params   = UsersGetReviewGetParams
-			Response = *UsersGetReviewGetOK
+			Response = UsersGetReviewGetRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,

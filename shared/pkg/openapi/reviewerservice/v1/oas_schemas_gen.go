@@ -8,88 +8,76 @@ import (
 	"github.com/go-faster/errors"
 )
 
-// Ref: #/components/schemas/ErrorResponse
-type ErrorResponse struct {
-	Error ErrorResponseError `json:"error"`
+// Ref: #/components/schemas/bad_request_error
+type BadRequestError struct {
+	Error BadRequestErrorError `json:"error"`
 }
 
 // GetError returns the value of Error.
-func (s *ErrorResponse) GetError() ErrorResponseError {
+func (s *BadRequestError) GetError() BadRequestErrorError {
 	return s.Error
 }
 
 // SetError sets the value of Error.
-func (s *ErrorResponse) SetError(val ErrorResponseError) {
+func (s *BadRequestError) SetError(val BadRequestErrorError) {
 	s.Error = val
 }
 
-func (*ErrorResponse) pullRequestMergePostRes() {}
-func (*ErrorResponse) teamAddPostRes()          {}
-func (*ErrorResponse) teamGetGetRes()           {}
-func (*ErrorResponse) usersSetIsActivePostRes() {}
+func (*BadRequestError) teamAddPostRes() {}
 
-type ErrorResponseError struct {
-	Code    ErrorResponseErrorCode `json:"code"`
-	Message string                 `json:"message"`
+type BadRequestErrorError struct {
+	// Внутренние коды ошибок:
+	// - TEAM_EXISTS: команда сущесвует
+	// - PR_EXISTS: Pull Request существует.
+	Code BadRequestErrorErrorCode `json:"code"`
+	// Описание ошибки.
+	Message string `json:"message"`
 }
 
 // GetCode returns the value of Code.
-func (s *ErrorResponseError) GetCode() ErrorResponseErrorCode {
+func (s *BadRequestErrorError) GetCode() BadRequestErrorErrorCode {
 	return s.Code
 }
 
 // GetMessage returns the value of Message.
-func (s *ErrorResponseError) GetMessage() string {
+func (s *BadRequestErrorError) GetMessage() string {
 	return s.Message
 }
 
 // SetCode sets the value of Code.
-func (s *ErrorResponseError) SetCode(val ErrorResponseErrorCode) {
+func (s *BadRequestErrorError) SetCode(val BadRequestErrorErrorCode) {
 	s.Code = val
 }
 
 // SetMessage sets the value of Message.
-func (s *ErrorResponseError) SetMessage(val string) {
+func (s *BadRequestErrorError) SetMessage(val string) {
 	s.Message = val
 }
 
-type ErrorResponseErrorCode string
+// Внутренние коды ошибок:
+// - TEAM_EXISTS: команда сущесвует
+// - PR_EXISTS: Pull Request существует.
+type BadRequestErrorErrorCode string
 
 const (
-	ErrorResponseErrorCodeTEAMEXISTS  ErrorResponseErrorCode = "TEAM_EXISTS"
-	ErrorResponseErrorCodePREXISTS    ErrorResponseErrorCode = "PR_EXISTS"
-	ErrorResponseErrorCodePRMERGED    ErrorResponseErrorCode = "PR_MERGED"
-	ErrorResponseErrorCodeNOTASSIGNED ErrorResponseErrorCode = "NOT_ASSIGNED"
-	ErrorResponseErrorCodeNOCANDIDATE ErrorResponseErrorCode = "NO_CANDIDATE"
-	ErrorResponseErrorCodeNOTFOUND    ErrorResponseErrorCode = "NOT_FOUND"
+	BadRequestErrorErrorCodeTEAMEXISTS BadRequestErrorErrorCode = "TEAM_EXISTS"
+	BadRequestErrorErrorCodePREXISTS   BadRequestErrorErrorCode = "PR_EXISTS"
 )
 
-// AllValues returns all ErrorResponseErrorCode values.
-func (ErrorResponseErrorCode) AllValues() []ErrorResponseErrorCode {
-	return []ErrorResponseErrorCode{
-		ErrorResponseErrorCodeTEAMEXISTS,
-		ErrorResponseErrorCodePREXISTS,
-		ErrorResponseErrorCodePRMERGED,
-		ErrorResponseErrorCodeNOTASSIGNED,
-		ErrorResponseErrorCodeNOCANDIDATE,
-		ErrorResponseErrorCodeNOTFOUND,
+// AllValues returns all BadRequestErrorErrorCode values.
+func (BadRequestErrorErrorCode) AllValues() []BadRequestErrorErrorCode {
+	return []BadRequestErrorErrorCode{
+		BadRequestErrorErrorCodeTEAMEXISTS,
+		BadRequestErrorErrorCodePREXISTS,
 	}
 }
 
 // MarshalText implements encoding.TextMarshaler.
-func (s ErrorResponseErrorCode) MarshalText() ([]byte, error) {
+func (s BadRequestErrorErrorCode) MarshalText() ([]byte, error) {
 	switch s {
-	case ErrorResponseErrorCodeTEAMEXISTS:
+	case BadRequestErrorErrorCodeTEAMEXISTS:
 		return []byte(s), nil
-	case ErrorResponseErrorCodePREXISTS:
-		return []byte(s), nil
-	case ErrorResponseErrorCodePRMERGED:
-		return []byte(s), nil
-	case ErrorResponseErrorCodeNOTASSIGNED:
-		return []byte(s), nil
-	case ErrorResponseErrorCodeNOCANDIDATE:
-		return []byte(s), nil
-	case ErrorResponseErrorCodeNOTFOUND:
+	case BadRequestErrorErrorCodePREXISTS:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -97,25 +85,295 @@ func (s ErrorResponseErrorCode) MarshalText() ([]byte, error) {
 }
 
 // UnmarshalText implements encoding.TextUnmarshaler.
-func (s *ErrorResponseErrorCode) UnmarshalText(data []byte) error {
-	switch ErrorResponseErrorCode(data) {
-	case ErrorResponseErrorCodeTEAMEXISTS:
-		*s = ErrorResponseErrorCodeTEAMEXISTS
+func (s *BadRequestErrorErrorCode) UnmarshalText(data []byte) error {
+	switch BadRequestErrorErrorCode(data) {
+	case BadRequestErrorErrorCodeTEAMEXISTS:
+		*s = BadRequestErrorErrorCodeTEAMEXISTS
 		return nil
-	case ErrorResponseErrorCodePREXISTS:
-		*s = ErrorResponseErrorCodePREXISTS
+	case BadRequestErrorErrorCodePREXISTS:
+		*s = BadRequestErrorErrorCodePREXISTS
 		return nil
-	case ErrorResponseErrorCodePRMERGED:
-		*s = ErrorResponseErrorCodePRMERGED
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/conflict_error
+type ConflictError struct {
+	Error ConflictErrorError `json:"error"`
+}
+
+// GetError returns the value of Error.
+func (s *ConflictError) GetError() ConflictErrorError {
+	return s.Error
+}
+
+// SetError sets the value of Error.
+func (s *ConflictError) SetError(val ConflictErrorError) {
+	s.Error = val
+}
+
+func (*ConflictError) pullRequestCreatePostRes()   {}
+func (*ConflictError) pullRequestReassignPostRes() {}
+
+type ConflictErrorError struct {
+	// Внутренние коды ошибок:
+	// - PR_MERGED: Нельзя менять после MERGED
+	// - NOT_ASSIGNED: Пользователь не был назначен ревьювером
+	// - NO_CANDIDATE: Нет доступных кандидатов
+	// - PR_EXISTS: Пулреквест уже есть.
+	Code ConflictErrorErrorCode `json:"code"`
+	// Описание ошибки.
+	Message string `json:"message"`
+}
+
+// GetCode returns the value of Code.
+func (s *ConflictErrorError) GetCode() ConflictErrorErrorCode {
+	return s.Code
+}
+
+// GetMessage returns the value of Message.
+func (s *ConflictErrorError) GetMessage() string {
+	return s.Message
+}
+
+// SetCode sets the value of Code.
+func (s *ConflictErrorError) SetCode(val ConflictErrorErrorCode) {
+	s.Code = val
+}
+
+// SetMessage sets the value of Message.
+func (s *ConflictErrorError) SetMessage(val string) {
+	s.Message = val
+}
+
+// Внутренние коды ошибок:
+// - PR_MERGED: Нельзя менять после MERGED
+// - NOT_ASSIGNED: Пользователь не был назначен ревьювером
+// - NO_CANDIDATE: Нет доступных кандидатов
+// - PR_EXISTS: Пулреквест уже есть.
+type ConflictErrorErrorCode string
+
+const (
+	ConflictErrorErrorCodePRMERGED    ConflictErrorErrorCode = "PR_MERGED"
+	ConflictErrorErrorCodeNOTASSIGNED ConflictErrorErrorCode = "NOT_ASSIGNED"
+	ConflictErrorErrorCodeNOCANDIDATE ConflictErrorErrorCode = "NO_CANDIDATE"
+	ConflictErrorErrorCodePREXISTS    ConflictErrorErrorCode = "PR_EXISTS"
+)
+
+// AllValues returns all ConflictErrorErrorCode values.
+func (ConflictErrorErrorCode) AllValues() []ConflictErrorErrorCode {
+	return []ConflictErrorErrorCode{
+		ConflictErrorErrorCodePRMERGED,
+		ConflictErrorErrorCodeNOTASSIGNED,
+		ConflictErrorErrorCodeNOCANDIDATE,
+		ConflictErrorErrorCodePREXISTS,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ConflictErrorErrorCode) MarshalText() ([]byte, error) {
+	switch s {
+	case ConflictErrorErrorCodePRMERGED:
+		return []byte(s), nil
+	case ConflictErrorErrorCodeNOTASSIGNED:
+		return []byte(s), nil
+	case ConflictErrorErrorCodeNOCANDIDATE:
+		return []byte(s), nil
+	case ConflictErrorErrorCodePREXISTS:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ConflictErrorErrorCode) UnmarshalText(data []byte) error {
+	switch ConflictErrorErrorCode(data) {
+	case ConflictErrorErrorCodePRMERGED:
+		*s = ConflictErrorErrorCodePRMERGED
 		return nil
-	case ErrorResponseErrorCodeNOTASSIGNED:
-		*s = ErrorResponseErrorCodeNOTASSIGNED
+	case ConflictErrorErrorCodeNOTASSIGNED:
+		*s = ConflictErrorErrorCodeNOTASSIGNED
 		return nil
-	case ErrorResponseErrorCodeNOCANDIDATE:
-		*s = ErrorResponseErrorCodeNOCANDIDATE
+	case ConflictErrorErrorCodeNOCANDIDATE:
+		*s = ConflictErrorErrorCodeNOCANDIDATE
 		return nil
-	case ErrorResponseErrorCodeNOTFOUND:
-		*s = ErrorResponseErrorCodeNOTFOUND
+	case ConflictErrorErrorCodePREXISTS:
+		*s = ConflictErrorErrorCodePREXISTS
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/internal_server_error
+type InternalServerError struct {
+	Error InternalServerErrorError `json:"error"`
+}
+
+// GetError returns the value of Error.
+func (s *InternalServerError) GetError() InternalServerErrorError {
+	return s.Error
+}
+
+// SetError sets the value of Error.
+func (s *InternalServerError) SetError(val InternalServerErrorError) {
+	s.Error = val
+}
+
+func (*InternalServerError) pullRequestCreatePostRes()   {}
+func (*InternalServerError) pullRequestMergePostRes()    {}
+func (*InternalServerError) pullRequestReassignPostRes() {}
+func (*InternalServerError) teamAddPostRes()             {}
+func (*InternalServerError) teamGetGetRes()              {}
+func (*InternalServerError) usersGetReviewGetRes()       {}
+func (*InternalServerError) usersSetIsActivePostRes()    {}
+
+type InternalServerErrorError struct {
+	// Внутренние коды ошибок:
+	// - INTERNAL_ERROR - ошибка в работе сервиса.
+	Code InternalServerErrorErrorCode `json:"code"`
+	// Описание ошибки.
+	Message string `json:"message"`
+}
+
+// GetCode returns the value of Code.
+func (s *InternalServerErrorError) GetCode() InternalServerErrorErrorCode {
+	return s.Code
+}
+
+// GetMessage returns the value of Message.
+func (s *InternalServerErrorError) GetMessage() string {
+	return s.Message
+}
+
+// SetCode sets the value of Code.
+func (s *InternalServerErrorError) SetCode(val InternalServerErrorErrorCode) {
+	s.Code = val
+}
+
+// SetMessage sets the value of Message.
+func (s *InternalServerErrorError) SetMessage(val string) {
+	s.Message = val
+}
+
+// Внутренние коды ошибок:
+// - INTERNAL_ERROR - ошибка в работе сервиса.
+type InternalServerErrorErrorCode string
+
+const (
+	InternalServerErrorErrorCodeINTERNALERROR InternalServerErrorErrorCode = "INTERNAL_ERROR"
+)
+
+// AllValues returns all InternalServerErrorErrorCode values.
+func (InternalServerErrorErrorCode) AllValues() []InternalServerErrorErrorCode {
+	return []InternalServerErrorErrorCode{
+		InternalServerErrorErrorCodeINTERNALERROR,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s InternalServerErrorErrorCode) MarshalText() ([]byte, error) {
+	switch s {
+	case InternalServerErrorErrorCodeINTERNALERROR:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *InternalServerErrorErrorCode) UnmarshalText(data []byte) error {
+	switch InternalServerErrorErrorCode(data) {
+	case InternalServerErrorErrorCodeINTERNALERROR:
+		*s = InternalServerErrorErrorCodeINTERNALERROR
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/not_found_error
+type NotFoundError struct {
+	Error NotFoundErrorError `json:"error"`
+}
+
+// GetError returns the value of Error.
+func (s *NotFoundError) GetError() NotFoundErrorError {
+	return s.Error
+}
+
+// SetError sets the value of Error.
+func (s *NotFoundError) SetError(val NotFoundErrorError) {
+	s.Error = val
+}
+
+func (*NotFoundError) pullRequestCreatePostRes()   {}
+func (*NotFoundError) pullRequestMergePostRes()    {}
+func (*NotFoundError) pullRequestReassignPostRes() {}
+func (*NotFoundError) teamGetGetRes()              {}
+func (*NotFoundError) usersGetReviewGetRes()       {}
+func (*NotFoundError) usersSetIsActivePostRes()    {}
+
+type NotFoundErrorError struct {
+	// Внутренние коды ошибок:
+	// - NOT_FOUND - значения нет.
+	Code NotFoundErrorErrorCode `json:"code"`
+	// Описание ошибки.
+	Message string `json:"message"`
+}
+
+// GetCode returns the value of Code.
+func (s *NotFoundErrorError) GetCode() NotFoundErrorErrorCode {
+	return s.Code
+}
+
+// GetMessage returns the value of Message.
+func (s *NotFoundErrorError) GetMessage() string {
+	return s.Message
+}
+
+// SetCode sets the value of Code.
+func (s *NotFoundErrorError) SetCode(val NotFoundErrorErrorCode) {
+	s.Code = val
+}
+
+// SetMessage sets the value of Message.
+func (s *NotFoundErrorError) SetMessage(val string) {
+	s.Message = val
+}
+
+// Внутренние коды ошибок:
+// - NOT_FOUND - значения нет.
+type NotFoundErrorErrorCode string
+
+const (
+	NotFoundErrorErrorCodeNOTFOUND NotFoundErrorErrorCode = "NOT_FOUND"
+)
+
+// AllValues returns all NotFoundErrorErrorCode values.
+func (NotFoundErrorErrorCode) AllValues() []NotFoundErrorErrorCode {
+	return []NotFoundErrorErrorCode{
+		NotFoundErrorErrorCodeNOTFOUND,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s NotFoundErrorErrorCode) MarshalText() ([]byte, error) {
+	switch s {
+	case NotFoundErrorErrorCodeNOTFOUND:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *NotFoundErrorErrorCode) UnmarshalText(data []byte) error {
+	switch NotFoundErrorErrorCode(data) {
+	case NotFoundErrorErrorCodeNOTFOUND:
+		*s = NotFoundErrorErrorCodeNOTFOUND
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)
@@ -405,10 +663,6 @@ func (s *PullRequest) SetMergedAt(val OptNilDateTime) {
 	s.MergedAt = val
 }
 
-type PullRequestCreatePostConflict ErrorResponse
-
-func (*PullRequestCreatePostConflict) pullRequestCreatePostRes() {}
-
 type PullRequestCreatePostCreated struct {
 	Pr OptPullRequest `json:"pr"`
 }
@@ -425,14 +679,13 @@ func (s *PullRequestCreatePostCreated) SetPr(val OptPullRequest) {
 
 func (*PullRequestCreatePostCreated) pullRequestCreatePostRes() {}
 
-type PullRequestCreatePostNotFound ErrorResponse
-
-func (*PullRequestCreatePostNotFound) pullRequestCreatePostRes() {}
-
 type PullRequestCreatePostReq struct {
-	PullRequestID   string `json:"pull_request_id"`
+	// Уникальный ID PR.
+	PullRequestID string `json:"pull_request_id"`
+	// Название PR.
 	PullRequestName string `json:"pull_request_name"`
-	AuthorID        string `json:"author_id"`
+	// ID автора PR.
+	AuthorID string `json:"author_id"`
 }
 
 // GetPullRequestID returns the value of PullRequestID.
@@ -482,6 +735,7 @@ func (s *PullRequestMergePostOK) SetPr(val OptPullRequest) {
 func (*PullRequestMergePostOK) pullRequestMergePostRes() {}
 
 type PullRequestMergePostReq struct {
+	// Уникальный ID PR.
 	PullRequestID string `json:"pull_request_id"`
 }
 
@@ -494,14 +748,6 @@ func (s *PullRequestMergePostReq) GetPullRequestID() string {
 func (s *PullRequestMergePostReq) SetPullRequestID(val string) {
 	s.PullRequestID = val
 }
-
-type PullRequestReassignPostConflict ErrorResponse
-
-func (*PullRequestReassignPostConflict) pullRequestReassignPostRes() {}
-
-type PullRequestReassignPostNotFound ErrorResponse
-
-func (*PullRequestReassignPostNotFound) pullRequestReassignPostRes() {}
 
 type PullRequestReassignPostOK struct {
 	Pr PullRequest `json:"pr"`
@@ -688,6 +934,7 @@ func (s *PullRequestStatus) UnmarshalText(data []byte) error {
 
 // Ref: #/components/schemas/Team
 type Team struct {
+	// Уникальное имя команды.
 	TeamName string       `json:"team_name"`
 	Members  []TeamMember `json:"members"`
 }
@@ -732,9 +979,12 @@ func (*TeamAddPostCreated) teamAddPostRes() {}
 
 // Ref: #/components/schemas/TeamMember
 type TeamMember struct {
-	UserID   string `json:"user_id"`
+	// Уникальный ID пользователя.
+	UserID string `json:"user_id"`
+	// Имя пользователя.
 	Username string `json:"username"`
-	IsActive bool   `json:"is_active"`
+	// Активен ли пользователь.
+	IsActive bool `json:"is_active"`
 }
 
 // GetUserID returns the value of UserID.
@@ -769,10 +1019,14 @@ func (s *TeamMember) SetIsActive(val bool) {
 
 // Ref: #/components/schemas/User
 type User struct {
-	UserID   string `json:"user_id"`
+	// Уникальный ID пользователя.
+	UserID string `json:"user_id"`
+	// Имя пользователя.
 	Username string `json:"username"`
+	// Название команды пользователя.
 	TeamName string `json:"team_name"`
-	IsActive bool   `json:"is_active"`
+	// Активен ли пользователь.
+	IsActive bool `json:"is_active"`
 }
 
 // GetUserID returns the value of UserID.
@@ -840,6 +1094,8 @@ func (s *UsersGetReviewGetOK) SetPullRequests(val []PullRequestShort) {
 	s.PullRequests = val
 }
 
+func (*UsersGetReviewGetOK) usersGetReviewGetRes() {}
+
 type UsersSetIsActivePostOK struct {
 	User OptUser `json:"user"`
 }
@@ -857,6 +1113,7 @@ func (s *UsersSetIsActivePostOK) SetUser(val OptUser) {
 func (*UsersSetIsActivePostOK) usersSetIsActivePostRes() {}
 
 type UsersSetIsActivePostReq struct {
+	// Идентификатор пользователя.
 	UserID   string `json:"user_id"`
 	IsActive bool   `json:"is_active"`
 }

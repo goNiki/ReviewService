@@ -1,0 +1,13 @@
+type: object
+required: [ team_name, members]
+properties:
+  team_name:
+    type: string
+    minLength: 1
+    maxLength: 255
+    description: Уникальное имя команды
+  members:
+    type: array
+    minItems: 1
+    items:
+      $ref: ./TeamMember.yaml

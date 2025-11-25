@@ -1,0 +1,12 @@
+type: object
+required: [ pull_request_id, pull_request_name, author_id, status]
+properties:
+  pull_request_id:
+    type: string
+  pull_request_name:
+    type: string
+  author_id:
+    type: string
+  status:
+    type: string
+    enum: [OPEN, MERGED]

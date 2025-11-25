@@ -21,6 +21,10 @@ type TeamGetGetRes interface {
 	teamGetGetRes()
 }
 
+type UsersGetReviewGetRes interface {
+	usersGetReviewGetRes()
+}
+
 type UsersSetIsActivePostRes interface {
 	usersSetIsActivePostRes()
 }

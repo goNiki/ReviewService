@@ -1,0 +1,75 @@
+post:
+  tags: [PullRequests]
+  summary: Создать PR и автоматически назначить до 2 ревьюверов из команды автора
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required: [ pull_request_id, pull_request_name, author_id ]
+          properties:
+            pull_request_id:
+              type: string
+              minLength: 1
+              maxLength: 50
+              description: Уникальный ID PR
+            pull_request_name:
+              type: string
+              minLength: 1
+              maxLength: 255
+              description: Название PR
+            author_id:
+              type: string
+              minLength: 1
+              maxLength: 50
+              description: ID автора PR
+        example:
+          pull_request_id: pr-1001
+          pull_request_name: Add search
+          author_id: u1
+  responses:
+    '201':
+      description: PR создан
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              pr:
+                $ref: ../schemas/PullRequest.yaml
+          example:
+            pr:
+              pull_request_id: pr-1001
+              pull_request_name: Add search
+              author_id: u1
+              status: OPEN
+              assigned_reviewers: [u2, u3]
+    '404':
+      description: Автор/команда не найдены
+      content:
+        application/json:
+          schema:
+            $ref: ../errors/not_found_error.yaml
+          example:
+            error:
+              code: NOT_FOUND
+              message: autgor/team not found
+    '409':
+      description: Нарушение доменных правил переназначения
+      content:
+        application/json:
+          schema:
+            $ref: ../errors/conflict_error.yaml
+          example:
+            error: { code: PR_EXISTS, message: PR id already exists }
+    '500':
+      description: Ошибка в работе сервиса
+      content:
+        application/json:
+          schema:
+            $ref: ../errors/internal_server_error.yaml
+          example:
+            error:
+              code: INTERNAL_ERROR
+              message: internal service error

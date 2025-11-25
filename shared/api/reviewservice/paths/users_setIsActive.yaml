@@ -1,0 +1,58 @@
+post:
+  tags: [Users]
+  summary: Установить флаг активности пользователя
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required: [ user_id, is_active ]
+          properties:
+            user_id:
+              type: string
+              minLength: 1
+              maxLength: 50
+              description: Идентификатор пользователя
+            is_active:
+              type: boolean
+              escription: Флаг активности пользователя
+        example:
+          user_id: u2
+          is_active: false
+  responses:
+    '200':
+      description: Обновлённый пользователь
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: ../schemas/User.yaml
+          example:
+            user:
+              user_id: u2
+              username: Bob
+              team_name: backend
+              is_active: false
+    '404':
+      description: Пользователь не найден
+      content:
+        application/json:
+          schema:
+            $ref: ../errors/not_found_error.yaml
+          example:
+            error:
+              code: NOT_FOUND
+              message: user not found
+    '500':
+      description: Ошибка в работе сервиса
+      content:
+        application/json:
+          schema:
+            $ref: ../errors/internal_server_error.yaml
+          example:
+            error:
+              code: INTERNAL_ERROR
+              message: internal service error

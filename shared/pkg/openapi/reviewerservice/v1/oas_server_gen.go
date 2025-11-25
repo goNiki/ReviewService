@@ -46,7 +46,7 @@ type Handler interface {
 	// Получить PR'ы, где пользователь назначен ревьювером.
 	//
 	// GET /users/getReview
-	UsersGetReviewGet(ctx context.Context, params UsersGetReviewGetParams) (*UsersGetReviewGetOK, error)
+	UsersGetReviewGet(ctx context.Context, params UsersGetReviewGetParams) (UsersGetReviewGetRes, error)
 	// UsersSetIsActivePost implements POST /users/setIsActive operation.
 	//
 	// Установить флаг активности пользователя.

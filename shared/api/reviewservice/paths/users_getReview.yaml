@@ -1,0 +1,50 @@
+get:
+  tags: [Users]
+  summary: Получить PR'ы, где пользователь назначен ревьювером
+  parameters:
+    - $ref: ../params/UserIdQuery.yaml
+  responses:
+    '200':
+      description: Список PR'ов пользователя
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [ user_id, pull_requests ]
+            properties:
+              user_id:
+                type: string
+                minLength: 1
+                maxLength: 50
+              pull_requests:
+                type: array
+                items:
+                  $ref: ../schemas/PullRequestShort.yaml
+          example:
+            user_id: u2
+            pull_requests:
+              - pull_request_id: pr-1001
+                pull_request_name: Add search
+                author_id: u1
+                status: OPEN
+    '404':
+      description: Пользователь не найден
+      content:
+        application/json:
+          schema:
+            $ref: ../errors/not_found_error.yaml
+          example:
+            error:
+              code: NOT_FOUND
+              message: user not found
+    '500':
+      description: Ошибка в работе сервиса
+      content:
+        application/json:
+          schema:
+            $ref: ../errors/internal_server_error.yaml
+          example:
+            error:
+              code: INTERNAL_ERROR
+              message: internal service error
+    

@@ -64,7 +64,7 @@ type Invoker interface {
 	// Получить PR'ы, где пользователь назначен ревьювером.
 	//
 	// GET /users/getReview
-	UsersGetReviewGet(ctx context.Context, params UsersGetReviewGetParams) (*UsersGetReviewGetOK, error)
+	UsersGetReviewGet(ctx context.Context, params UsersGetReviewGetParams) (UsersGetReviewGetRes, error)
 	// UsersSetIsActivePost invokes POST /users/setIsActive operation.
 	//
 	// Установить флаг активности пользователя.
@@ -514,12 +514,12 @@ func (c *Client) sendTeamGetGet(ctx context.Context, params TeamGetGetParams) (r
 // Получить PR'ы, где пользователь назначен ревьювером.
 //
 // GET /users/getReview
-func (c *Client) UsersGetReviewGet(ctx context.Context, params UsersGetReviewGetParams) (*UsersGetReviewGetOK, error) {
+func (c *Client) UsersGetReviewGet(ctx context.Context, params UsersGetReviewGetParams) (UsersGetReviewGetRes, error) {
 	res, err := c.sendUsersGetReviewGet(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendUsersGetReviewGet(ctx context.Context, params UsersGetReviewGetParams) (res *UsersGetReviewGetOK, err error) {
+func (c *Client) sendUsersGetReviewGet(ctx context.Context, params UsersGetReviewGetParams) (res UsersGetReviewGetRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.URLTemplateKey.String("/users/getReview"),

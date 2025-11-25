@@ -66,7 +66,7 @@ func (UnimplementedHandler) TeamGetGet(ctx context.Context, params TeamGetGetPar
 // Получить PR'ы, где пользователь назначен ревьювером.
 //
 // GET /users/getReview
-func (UnimplementedHandler) UsersGetReviewGet(ctx context.Context, params UsersGetReviewGetParams) (r *UsersGetReviewGetOK, _ error) {
+func (UnimplementedHandler) UsersGetReviewGet(ctx context.Context, params UsersGetReviewGetParams) (r UsersGetReviewGetRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

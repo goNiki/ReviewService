@@ -1,0 +1,41 @@
+openapi: 3.0.3
+
+info:
+  title: PR Reviewer Assignment Service (Test Task, Fall 2025)
+  version: "1.0.0"
+
+x-ogen:
+  target: ./shared/pkg/openapi/reviewerservice/v1
+  package: reviewerservice
+  clean: true
+
+tags: 
+  - name: Teams
+    description: Операции c командой
+  - name: Users
+    description: Операции c юзерами
+  - name: PullRequests
+    description: Операции c пулРевестами
+  - name: Health
+    description: Операция проверки работы сервиса
+
+paths:
+  /team/add:
+    $ref: ./paths/team_add.yaml
+  /team/get:
+    $ref: ./paths/team_get.yaml
+  /users/setIsActive:
+    $ref: ./paths/users_setIsActive.yaml
+  /pullRequest/create:
+    $ref: ./paths/pullRequest_create.yaml
+  /pullRequest/merge:
+    $ref: ./paths/pullRequest_merge.yaml
+  /pullRequest/reassign:
+    $ref: ./paths/pullRequest_reassign.yaml
+  /users/getReview:
+    $ref: ./paths/users_getReview.yaml
+
+
+
+
+ 
