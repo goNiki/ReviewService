@@ -14,6 +14,6 @@ CREATE TABLE pull_requests (
 
 -- +goose Down
 -- +goose StatementBegin
-DELETE TABLE IF EXISTS pull_requests;
-DELETE TYPE IF EXISTS pr_status;
+DROP TABLE IF EXISTS pull_requests;
+DROP TYPE IF EXISTS pr_status;
 -- +goose StatementEnd
