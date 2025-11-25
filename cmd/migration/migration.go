@@ -16,11 +16,9 @@ import (
 
 const MigDir = "./migrations"
 
-var configpath = "./configs/.env"
-
 func main() {
 
-	cfg, err := config.InitConfig(configpath)
+	cfg, err := config.InitConfig()
 	if err != nil {
 		log.Fatal(err)
 	}

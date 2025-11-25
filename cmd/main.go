@@ -11,11 +11,12 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/goNiki/ReviewService/app/container"
 	"github.com/goNiki/ReviewService/internal/infrastructure/swagger"
 )
 
-//go:embed openapi.yaml
+//go:embed openapi-bundled.yaml
 var swaggerDoc []byte
 
 func main() {
@@ -26,20 +27,26 @@ func main() {
 	}
 
 	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Use(middleware.RequestID)
+	r.Use(middleware.Recoverer)
 
 	swagger.RegisterRoutes(r, swaggerDoc)
 
 	r.Mount("/", c.ApiServer)
 
 	c.Server.Handler = r
-	fmt.Println("Сервер запускается ")
+
+	serverAddr := fmt.Sprintf("%s:%s", c.Config.ServerConfig.Host, c.Config.ServerConfig.Port)
+	fmt.Printf("Сервер запускается на %s\n", serverAddr)
+
 	go func() {
 		if err := c.Server.ListenAndServe(); err != nil {
-			c.Log.Log.Error("Ошибка запуска сервера", "error", err)
+			log.Printf("Ошибка запуска сервера: %v\n", err)
 		}
 	}()
 
-	c.Log.Log.Info("Сервер запущен на порту", "port", c.Config.ServerConfig.Port)
+	fmt.Printf("Сервер запущен на порту %s\n", c.Config.ServerConfig.Port)
 
 	quit := make(chan os.Signal, 1)
 
