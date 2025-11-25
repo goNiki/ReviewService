@@ -29,5 +29,4 @@ go.work.sum
 # env file
 .idea
 .vscode
-.cursor
 generate.go

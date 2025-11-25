@@ -1,28 +1,41 @@
 services:
   postgres:
-    image: postgres:17
-    container_name: ReviewServiceDB
+    image: postgres:${POSTGRES_VERSION:-17}
+    container_name: reviewservice-db
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-reviewservice}
     ports:
-      - "${DB_PORT}:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
-      interval: 10s
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 5s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
-    networks:
-      - app-network
-  
 
-networks:
-  app-network:
-    driver: bridge
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: reviewservice-app
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-reviewservice}
+      DB_SSLMODE: ${DB_SSLMODE:-disable}
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: ${SERVER_PORT:-8080}
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
-  pgdata:
+  postgres_data:

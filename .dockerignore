@@ -1,0 +1,43 @@
+# Binaries
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test files
+*_test.go
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+README.md
+task/
+
+# Temporary files
+*.log
+tmp/
+
+# Dependencies (will be downloaded during build)
+vendor/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.out
